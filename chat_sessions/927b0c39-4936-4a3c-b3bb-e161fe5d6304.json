@@ -1,0 +1,18 @@
+{
+  "id": "927b0c39-4936-4a3c-b3bb-e161fe5d6304",
+  "title": "dau bung, day hoi, kho tieu",
+  "created_at": "2026-06-01T10:13:50.603579",
+  "updated_at": "2026-06-01T10:13:50.895430",
+  "messages": [
+    {
+      "role": "user",
+      "content": "dau bung, day hoi, kho tieu",
+      "timestamp": "2026-06-01T10:13:50.895430"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:13:50.895430"
+    }
+  ]
+}

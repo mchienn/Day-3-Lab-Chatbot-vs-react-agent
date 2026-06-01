@@ -1,0 +1,58 @@
+{
+  "id": "dfd1498a-ac24-448f-86f3-6d5449ab7675",
+  "title": "Summary",
+  "created_at": "2026-06-01T10:14:26.740924",
+  "updated_at": "2026-06-01T10:20:45.228673",
+  "messages": [
+    {
+      "role": "user",
+      "content": "dau bung, day hoi, kho tieu",
+      "timestamp": "2026-06-01T10:14:28.951812"
+    },
+    {
+      "role": "agent",
+      "content": "Bạn muốn đặt lịch khám vào ngày nào ạ?",
+      "timestamp": "2026-06-01T10:14:28.951812"
+    },
+    {
+      "role": "user",
+      "content": "02/06/2026",
+      "timestamp": "2026-06-01T10:15:07.355395"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:15:07.355395"
+    },
+    {
+      "role": "user",
+      "content": "02/06/2026",
+      "timestamp": "2026-06-01T10:19:42.803350"
+    },
+    {
+      "role": "agent",
+      "content": "Phòng khám có lịch trống của BS. Lê Thị B thuộc Khoa Hô hấp vào ngày 02/06/2026: Buổi sáng có các khung giờ 07:30 và 09:15. Bạn muốn đặt lịch vào giờ nào ạ?",
+      "timestamp": "2026-06-01T10:19:42.803350"
+    },
+    {
+      "role": "user",
+      "content": "7:30",
+      "timestamp": "2026-06-01T10:20:00.394194"
+    },
+    {
+      "role": "agent",
+      "content": "Bạn vui lòng cho tôi biết tên đầy đủ của bạn để tôi đặt lịch khám với BS. Lê Thị B vào lúc 07:30 ngày 02/06/2026 tại Khoa Hô hấp ạ.",
+      "timestamp": "2026-06-01T10:20:00.394194"
+    },
+    {
+      "role": "user",
+      "content": "Hoàng Quốc Việt Anh",
+      "timestamp": "2026-06-01T10:20:45.228673"
+    },
+    {
+      "role": "agent",
+      "content": "Lịch khám của bạn với BS. Lê Thị B vào lúc 07:30 ngày 02/06/2026 đã được đặt thành công. Mã cuộc hẹn của bạn là TK-9464.",
+      "timestamp": "2026-06-01T10:20:45.228673"
+    }
+  ]
+}

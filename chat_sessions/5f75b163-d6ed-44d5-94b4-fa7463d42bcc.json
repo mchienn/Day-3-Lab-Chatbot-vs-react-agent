@@ -1,0 +1,28 @@
+{
+  "id": "5f75b163-d6ed-44d5-94b4-fa7463d42bcc",
+  "title": "Tôi bị đau bụng, đầy hơi, khó tiêu",
+  "created_at": "2026-06-01T10:13:05.965502",
+  "updated_at": "2026-06-01T10:13:21.372934",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Tôi bị đau bụng, đầy hơi, khó tiêu",
+      "timestamp": "2026-06-01T10:13:08.536307"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:13:08.536307"
+    },
+    {
+      "role": "user",
+      "content": "Alo",
+      "timestamp": "2026-06-01T10:13:21.372934"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:13:21.372934"
+    }
+  ]
+}

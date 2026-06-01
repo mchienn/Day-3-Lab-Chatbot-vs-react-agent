@@ -29,6 +29,7 @@ from src.tools.medical_tools import (
     CheckDoctorAvailabilityTool,
     BookAppointmentTool
 )
+from src.telemetry.metrics import tracker
 
 app = FastAPI(title="Vinmec Smart Clinic - Hệ Thống Tiếp Tân Thông Minh")
 

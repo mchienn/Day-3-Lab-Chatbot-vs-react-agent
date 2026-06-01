@@ -510,6 +510,31 @@ h1, h2, h3 {
 .badge-value { font-weight: 600; color: var(--foreground); }
 .model-badge .badge-value { font-family: 'JetBrains Mono', monospace; font-size: 11px; }
 
+/* Monitoring button */
+.btn-monitoring {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    color: white;
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition-fast);
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.btn-monitoring:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+}
+
+.btn-monitoring i {
+    font-size: 13px;
+}
+
 /* ==========================================================================
    MAIN WORKSPACE
    ========================================================================== */

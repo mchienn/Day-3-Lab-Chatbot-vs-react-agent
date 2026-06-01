@@ -1,0 +1,38 @@
+{
+  "id": "a6177cbc-7d0a-4cf0-ad87-3cb566e6b791",
+  "title": "dau bung, day hoi, kho tieu",
+  "created_at": "2026-06-01T10:14:11.954722",
+  "updated_at": "2026-06-01T10:21:37.518783",
+  "messages": [
+    {
+      "role": "user",
+      "content": "dau bung, day hoi, kho tieu",
+      "timestamp": "2026-06-01T10:14:12.186119"
+    },
+    {
+      "role": "agent",
+      "content": "Xin lỗi, hệ thống đang gặp sự cố. Vui lòng thử lại sau.",
+      "timestamp": "2026-06-01T10:14:12.186119"
+    },
+    {
+      "role": "user",
+      "content": "Phân tích triệu chứng của t và đưa ra chẩn đoán. dau bung, day hoi, kho tieu",
+      "timestamp": "2026-06-01T10:21:16.298965"
+    },
+    {
+      "role": "agent",
+      "content": "Dựa trên các triệu chứng bạn cung cấp, bạn nên đến khám tại Khoa Hô hấp. Bạn muốn đặt lịch vào ngày nào?",
+      "timestamp": "2026-06-01T10:21:16.298965"
+    },
+    {
+      "role": "user",
+      "content": "Phân tích triệu chứng xem đó là bệnh gì",
+      "timestamp": "2026-06-01T10:21:37.518783"
+    },
+    {
+      "role": "agent",
+      "content": "Dựa trên các triệu chứng bạn cung cấp, bạn nên đến khám tại Khoa Hô hấp. Bạn muốn đặt lịch vào ngày nào?",
+      "timestamp": "2026-06-01T10:21:37.518783"
+    }
+  ]
+}

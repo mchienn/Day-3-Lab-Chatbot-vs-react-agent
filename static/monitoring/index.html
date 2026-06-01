@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Monitoring Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <div class="header-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <div>
+                    <h1>Agent Monitoring</h1>
+                    <p class="header-sub">Real-time Performance Dashboard</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="auto-refresh">
+                    <label class="toggle">
+                        <input type="checkbox" id="auto-refresh-toggle" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">Auto-refresh (10s)</span>
+                </div>
+                <button class="btn-refresh" onclick="refreshAll()" title="Refresh now">
+                    <i class="fa-solid fa-rotate"></i>
+                </button>
+                <span class="last-update" id="last-update"></span>
+            </div>
+        </header>
+
+        <!-- Stats Cards Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-server"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value" id="stat-sessions">0</div>
+                    <div class="stat-label">Total Sessions</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-coins"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value" id="stat-cost">$0.00</div>
+                    <div class="stat-label">Total Cost</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-microchip"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value" id="stat-tokens">0</div>
+                    <div class="stat-label">Total Tokens</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-clock"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value" id="stat-latency">0ms</div>
+                    <div class="stat-label">Avg Latency</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fa-solid fa-bolt"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value" id="stat-tps">0</div>
+                    <div class="stat-label">Tokens/sec</div>
+                </div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                <div class="stat-content">
+                    <div class="stat-value" id="stat-success">0%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="content-grid">
+            <!-- Tool Usage Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-wrench"></i> Tool Usage</h2>
+                </div>
+                <div class="panel-body">
+                    <div id="tool-usage-chart" class="tool-chart">
+                        <div class="empty-state">No tool data yet</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Logs Panel -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-scroll"></i> Recent Logs</h2>
+                    <span class="badge" id="log-count">0</span>
+                </div>
+                <div class="panel-body">
+                    <div id="logs-container" class="logs-container">
+                        <div class="empty-state">No logs yet</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sessions Table -->
+        <div class="panel full-width">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-database"></i> Session History</h2>
+                <span class="badge" id="session-count">0</span>
+            </div>
+            <div class="panel-body">
+                <div class="table-wrapper">
+                    <table id="sessions-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>User Input</th>
+                                <th>Status</th>
+                                <th>Tokens</th>
+                                <th>Latency</th>
+                                <th>Cost</th>
+                                <th>TPS</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sessions-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Detail Modal -->
+    <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Session Report Detail</h2>
+                <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
