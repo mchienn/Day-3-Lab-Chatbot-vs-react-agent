@@ -1,6 +1,6 @@
 # Group Report: Lab 3 - Production-Grade Agentic System
 
-- **Team Name**: M&C Team
+- **Team Name**: VinMec Team
 - **Team Members**:
   - Nguyễn Đức Mạnh (manhndt - manhndthe181128@fpt.edu.vn)
   - Nguyễn Minh Chiến (mchienn - nmc27705@gmail.com)
