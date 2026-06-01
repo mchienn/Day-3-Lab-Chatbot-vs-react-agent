@@ -31,7 +31,11 @@ except ImportError:
 # Core system imports
 from src.core.llm_provider import LLMProvider
 from src.agent.agent import ReActAgent
-from tools import check_red_flags, recommend_specialty, transfer_booking
+from src.tools.medical_tools import (
+    AnalyzeSymptomTool,
+    CheckDoctorAvailabilityTool,
+    BookAppointmentTool
+)
 
 # --- CONFIGURATION CONSTANTS ---
 MAX_ITERATIONS = 5  # Maximum reasoning steps allowed per query
@@ -41,8 +45,8 @@ LOG_FILE_PATH = "logs/agent.log"
 # --- MOCK LLM PROVIDER FOR FALLBACK/TESTING ---
 class MockLLMProvider(LLMProvider):
     """
-    Mock LLM Provider that simulates the ReAct reasoning flow
-    for testing and educational purposes when API keys are not available.
+    Mock LLM Provider that simulates the ReAct reasoning flow using the official
+    AnalyzeSymptomTool, CheckDoctorAvailabilityTool, and BookAppointmentTool.
     """
     def __init__(self, model_name: str = "mock-gemini-2.5"):
         super().__init__(model_name, "mock-api-key")
@@ -50,80 +54,36 @@ class MockLLMProvider(LLMProvider):
     def generate(self, prompt: str, system_prompt: Optional[str] = None) -> Dict[str, Any]:
         # Count the number of observations to determine the current ReAct loop step
         step = prompt.count("Observation:")
-        prompt_lower = prompt.lower()
-        
-        # Simulate quick API network latency (500ms)
-        time.sleep(0.5)
-        
-        # Check for emergency triggers in the prompt
-        is_emergency = any(
-            kw in prompt_lower for kw in [
-                "đau ngực", "khó thở", "chest pain", "shortness of breath", 
-                "stroke", "slurred speech", "bleeding", "unconscious", "seizure"
-            ]
-        )
+        time.sleep(0.5)  # Simulate network latency
         
         content = ""
-        if is_emergency:
-            if step == 0:
-                content = (
-                    "Thought: The patient reports symptoms that look like an emergency. I must immediately run check_red_flags.\n"
-                    "Action: check_red_flags(\"patient reported emergency symptoms\")"
-                )
-            elif step == 1:
-                content = (
-                    "Thought: The check_red_flags tool confirmed an emergency. I must immediately route booking to Cardiology.\n"
-                    "Action: transfer_booking(\"Cardiology\")"
-                )
-            else:
-                content = (
-                    "Thought: Emergency transfer is done. I will warn the patient and finish.\n"
-                    "Final Answer: CANH BAO KHAN CAP: Trieu chung cua ban rat nguy hiem. Chúng tôi đã chuyen tiep ban den khoa Tim mach/Cap cuu. Hay den ngay co so y te gan nhat hoac goi 115!"
-                )
+        if step == 0:
+            content = (
+                "Thought: The patient wants to book an appointment for stomach pain. I need to first analyze their symptoms to recommend a specialty.\n"
+                "Action: AnalyzeSymptomTool(\"Tôi bị đau bụng nhiều và đầy hơi khó tiêu\")"
+            )
+        elif step == 1:
+            content = (
+                "Thought: The specialty recommended is 'Khoa Tiêu hóa'. I should check the available time slots for doctors in this specialty on 2026-06-02.\n"
+                "Action: CheckDoctorAvailabilityTool(\"Khoa Tiêu hóa\", \"2026-06-02\")"
+            )
+        elif step == 2:
+            content = (
+                "Thought: I see BS. Trần Văn A has available slots in the morning. I will book an appointment for the patient 'Nguyễn Văn A' at 08:00.\n"
+                "Action: BookAppointmentTool(\"Nguyễn Văn A\", \"BS. Trần Văn A\", \"2026-06-02 08:00\")"
+            )
         else:
-            # Standard Patient Triage Flow
-            if step == 0:
-                content = (
-                    "Thought: I must verify if there are any emergency red flags in the symptoms first.\n"
-                    "Action: check_red_flags(\"standard symptoms checking\")"
-                )
-            elif step == 1:
-                content = (
-                    "Thought: No emergency red flags found. I will recommend a specialty based on symptoms.\n"
-                    "Action: recommend_specialty(\"patient symptoms checking\")"
-                )
-            elif step == 2:
-                # Detect target specialty to mock the reasoning
-                specialty = "Gastroenterology"
-                if "khớp" in prompt_lower or "xương" in prompt_lower or "ankle" in prompt_lower or "bone" in prompt_lower:
-                    specialty = "Orthopedics"
-                elif "skin" in prompt_lower or "da" in prompt_lower:
-                    specialty = "Dermatology"
-                elif "tim" in prompt_lower or "ngực" in prompt_lower:
-                    specialty = "Cardiology"
-                
-                content = (
-                    f"Thought: Specialty recommended is {specialty}. I will transfer the patient to the Booking Agent.\n"
-                    f"Action: transfer_booking(\"{specialty}\")"
-                )
-            else:
-                specialty = "Gastroenterology"
-                if "khớp" in prompt_lower or "xương" in prompt_lower or "ankle" in prompt_lower or "bone" in prompt_lower:
-                    specialty = "Orthopedics"
-                elif "skin" in prompt_lower or "da" in prompt_lower:
-                    specialty = "Dermatology"
-                
-                content = (
-                    f"Thought: Transfer complete. I will inform the patient and close the interaction.\n"
-                    f"Final Answer: Tôi đã chuyen thong tin cua ban den Bo phan Dat lich (Booking Agent) cho chuyen khoa {specialty}. Ho se lien he voi ban de sap xep lich hen som nhat."
-                )
+            content = (
+                "Thought: The booking is confirmed. I will give the patient their booking details and reference code.\n"
+                "Final Answer: Tôi đã đặt lịch thành công cho bạn Nguyễn Văn A với BS. Trần Văn A vào lúc 08:00 ngày 2026-06-02. Mã cuộc hẹn của bạn là TK-8699."
+            )
 
         return {
             "content": content,
             "usage": {
                 "prompt_tokens": 100 + step * 50,
-                "completion_tokens": 35,
-                "total_tokens": 135 + step * 50
+                "completion_tokens": 40,
+                "total_tokens": 140 + step * 50
             },
             "latency_ms": 500,
             "provider": "mock"
@@ -338,12 +298,8 @@ def main():
                 
             # Quick trigger for running mock tests if input is 'test'
             if user_input.lower() == "test":
-                print("\n[TEST] Simulating patient input: 'Tôi đau bụng 2 ngày nay'")
-                test_input = "Tôi đau bụng 2 ngày nay"
-                run_agent_session(test_input, base_provider)
-                
-                print("\n[TEST] Simulating patient input: 'Tôi bị đau ngực và khó thở'")
-                test_input = "Tôi bị đau ngực và khó thở"
+                print("\n[TEST] Simulating patient input: 'Tôi bị đau bụng nhiều và đầy hơi khó tiêu'")
+                test_input = "Tôi bị đau bụng nhiều và đầy hơi khó tiêu"
                 run_agent_session(test_input, base_provider)
                 continue
                 
@@ -367,22 +323,27 @@ def run_agent_session(user_input: str, base_provider: LLMProvider):
     # Wrap provider to capture and log completions in real-time
     logged_provider = LoggedProviderWrapper(base_provider, steps_tracker)
     
-    # Register and wrap tools with console log interceptors
+    # Instantiate the new official medical tools
+    symptom_tool = AnalyzeSymptomTool()
+    availability_tool = CheckDoctorAvailabilityTool()
+    booking_tool = BookAppointmentTool()
+    
+    # Register and wrap official tools with console log interceptors
     registered_tools = [
         {
-            "name": "check_red_flags",
-            "description": "Checks patient symptoms for life-threatening emergency conditions. Argument: symptoms string.",
-            "function": wrap_tool_with_logging("check_red_flags", check_red_flags, steps_tracker)
+            "name": symptom_tool.name,
+            "description": symptom_tool.description,
+            "function": wrap_tool_with_logging(symptom_tool.name, symptom_tool.execute_from_string, steps_tracker)
         },
         {
-            "name": "recommend_specialty",
-            "description": "Recommends a medical specialty based on patient symptoms. Argument: symptoms string.",
-            "function": wrap_tool_with_logging("recommend_specialty", recommend_specialty, steps_tracker)
+            "name": availability_tool.name,
+            "description": availability_tool.description,
+            "function": wrap_tool_with_logging(availability_tool.name, availability_tool.execute_from_string, steps_tracker)
         },
         {
-            "name": "transfer_booking",
-            "description": "Transfers patient booking details to the booking agent for the recommended specialty. Argument: specialty name.",
-            "function": wrap_tool_with_logging("transfer_booking", transfer_booking, steps_tracker)
+            "name": booking_tool.name,
+            "description": booking_tool.description,
+            "function": wrap_tool_with_logging(booking_tool.name, booking_tool.execute_from_string, steps_tracker)
         }
     ]
     
