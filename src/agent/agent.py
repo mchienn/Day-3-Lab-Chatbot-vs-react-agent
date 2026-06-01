@@ -58,7 +58,7 @@ Rules:
             step_latency = int((time.time() - step_start) * 1000)
 
             content = result["content"]
-            usage = result.get("usage", {})
+            usage = result.get("usage") or {}
 
             # Track metrics
             tracker.track_request(
@@ -90,6 +90,7 @@ Rules:
                 tool_name = match.group(1)
                 tool_args = match.group(2).strip('\'"')
                 logger.log_event("TOOL_CALL", {"step": steps, "tool": tool_name, "args": tool_args})
+                tracker.track_tool_call(tool_name)
 
                 observation = self._execute_tool(tool_name, tool_args)
                 logger.log_event("TOOL_RESULT", {"step": steps, "tool": tool_name, "result": observation})
@@ -115,12 +116,12 @@ Rules:
         }
         logger.log_event("SESSION_SUMMARY", summary)
 
-        # Export report
-        report_file = tracker.export_report(user_input, final_answer)
+        # Export report (keep historical data)
+        report_file = tracker.export_report(user_input, final_answer, status)
         logger.log_event("REPORT_SAVED", {"file": report_file})
 
-        # Reset tracker for next session
-        tracker.reset()
+        # Reset session metrics (historical data preserved)
+        tracker.reset_session()
 
         return summary
 

@@ -1,4 +1,9 @@
 import time
+import warnings
+# Suppress Google API version and package deprecation warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+
 import google.generativeai as genai
 from typing import Dict, Any, Optional, Generator
 from google.generativeai.types import generation_types
@@ -9,11 +14,11 @@ class GeminiProvider(LLMProvider):
         super().__init__(model_name, api_key)
         genai.configure(api_key=self.api_key)
         
-        # setup generationconfig for agent through logic, not create
         self.config = genai.GenerationConfig(
             temperature=0.0,
             top_p=0.95,
-            top_k=40
+            top_k=40,
+            stop_sequences=["\nObservation:", "Observation:"]
         )
 
     def generate(self, prompt: str, system_prompt: Optional[str] = None) -> Dict[str, Any]:
