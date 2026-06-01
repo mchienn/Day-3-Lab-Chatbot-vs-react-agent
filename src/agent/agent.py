@@ -1,18 +1,17 @@
 import os
 import re
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Union
 from src.core.llm_provider import LLMProvider
+from src.tools.base import BaseTool
 from src.telemetry.logger import logger
 
 class ReActAgent:
-    """
-    SKELETON: A ReAct-style Agent that follows the Thought-Action-Observation loop.
-    Students should implement the core loop logic and tool execution.
-    """
-    
-    def __init__(self, llm: LLMProvider, tools: List[Dict[str, Any]], max_steps: int = 5):
+    def __init__(self, llm: LLMProvider, tools: List[Union[BaseTool, Dict[str, Any]]], max_steps: int = 5):
         self.llm = llm
-        self.tools = tools
+        self.tools = [
+            t.to_agent_dict() if isinstance(t, BaseTool) else t
+            for t in tools
+        ]
         self.max_steps = max_steps
         self.history = []
 
