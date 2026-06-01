@@ -1,0 +1,664 @@
+/* ==========================================================================
+   MINIMALIST MODERN DESIGN SYSTEM TOKENS
+   ========================================================================== */
+:root {
+    /* Colors */
+    --background: #FAFAFA;
+    --foreground: #0F172A;
+    --muted: #F1F5F9;
+    --muted-foreground: #64748B;
+    --accent: #0052FF;
+    --accent-secondary: #4D7CFF;
+    --accent-foreground: #FFFFFF;
+    --border: #E2E8F0;
+    --card: #FFFFFF;
+    
+    /* Gradients */
+    --signature-gradient: linear-gradient(135deg, var(--accent), var(--accent-secondary));
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 2px 4px -1px rgba(15, 23, 42, 0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
+    --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 10px 10px -5px rgba(15, 23, 42, 0.04);
+    --shadow-accent: 0 4px 14px rgba(0, 82, 255, 0.25);
+    --shadow-accent-lg: 0 8px 24px rgba(0, 82, 255, 0.35);
+    
+    /* Border Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    
+    /* Transitions */
+    --transition-fast: all 0.15s ease-out;
+    --transition-normal: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   RESET & GLOBAL STYLES
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.625;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+}
+
+/* Typography elements */
+h1, h2, h3 {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   UTILITY STYLES
+   ========================================================================== */
+.gradient-text {
+    background: var(--signature-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}
+
+/* Section pill badges */
+.section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid rgba(0, 82, 255, 0.2);
+    background-color: rgba(0, 82, 255, 0.05);
+    padding: 6px 14px;
+    border-radius: 9999px;
+    margin-bottom: 12px;
+}
+
+.label-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--accent);
+}
+
+.label-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    line-height: 1;
+}
+
+/* ==========================================================================
+   APP CONTAINER & HEADER
+   ========================================================================== */
+.app-container {
+    width: 100%;
+    max-width: 1300px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
+}
+
+.app-header {
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--signature-gradient);
+    color: var(--accent-foreground);
+    border-radius: var(--radius-md);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    box-shadow: var(--shadow-accent);
+}
+
+.brand-text h1 {
+    font-family: 'Calistoga', Georgia, serif;
+    font-weight: normal;
+    font-size: 24px;
+    line-height: 1.1;
+    color: var(--foreground);
+}
+
+.brand-subtitle {
+    font-size: 11px;
+    color: var(--muted-foreground);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+}
+
+.header-status {
+    display: flex;
+    gap: 12px;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    padding: 6px 14px;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    font-size: 12px;
+}
+
+.badge-label {
+    color: var(--muted-foreground);
+}
+
+.badge-value {
+    font-weight: 600;
+    color: var(--foreground);
+}
+
+.model-badge .badge-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+}
+
+/* ==========================================================================
+   MAIN DUAL-PANE WORKSPACE
+   ========================================================================== */
+.app-main {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
+    min-height: 0;
+}
+
+.pane-chat {
+    width: 100%;
+    max-width: 800px;
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.pane-chat .pane-header h2 {
+    font-family: 'Calistoga', Georgia, serif;
+    font-weight: normal;
+    font-size: 26px;
+    color: var(--foreground);
+    margin-bottom: 20px;
+}
+
+/* ==========================================================================
+   LEFT PANE: CHAT COMPONENT
+   ========================================================================== */
+.chat-history {
+    flex-grow: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-right: 8px;
+    margin-bottom: 16px;
+}
+
+.message {
+    display: flex;
+    gap: 12px;
+    max-width: 85%;
+    animation: fadeInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.message-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    font-size: 14px;
+}
+
+.message-content {
+    padding: 14px 18px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    box-shadow: var(--shadow-sm);
+}
+
+.message-content p {
+    margin-bottom: 8px;
+}
+.message-content p:last-child {
+    margin-bottom: 0;
+}
+.message-content ul {
+    margin-left: 20px;
+    margin-bottom: 8px;
+}
+
+/* System/Agent Messages */
+.message.system-message {
+    align-self: flex-start;
+}
+
+.message.system-message .message-avatar {
+    background-color: rgba(0, 82, 255, 0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0, 82, 255, 0.15);
+}
+
+.message.system-message .message-content {
+    background-color: var(--muted);
+    color: var(--foreground);
+    border-top-left-radius: 2px;
+    border: 1px solid var(--border);
+}
+
+/* User Messages */
+.message.user-message {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.message.user-message .message-avatar {
+    background-color: var(--foreground);
+    color: var(--background);
+}
+
+.message.user-message .message-content {
+    background: var(--signature-gradient);
+    color: var(--accent-foreground);
+    border-top-right-radius: 2px;
+    box-shadow: var(--shadow-accent);
+}
+
+/* Suggestions tags */
+.chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.suggestion-tag {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    padding: 8px 14px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 500;
+    transition: var(--transition-fast);
+}
+
+.suggestion-tag:hover {
+    border-color: rgba(0, 82, 255, 0.3);
+    color: var(--accent);
+    background-color: rgba(0, 82, 255, 0.02);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Form inputs */
+.chat-form {
+    flex-shrink: 0;
+}
+
+.input-wrapper {
+    display: flex;
+    gap: 12px;
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 6px;
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-fast);
+}
+
+.input-wrapper:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(0, 82, 255, 0.15);
+    background-color: var(--card);
+}
+
+.input-wrapper input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    padding: 0 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--foreground);
+    outline: none;
+    height: 48px;
+}
+
+.input-wrapper input::placeholder {
+    color: var(--muted-foreground);
+    opacity: 0.6;
+}
+
+.btn-send {
+    background: var(--signature-gradient);
+    color: var(--accent-foreground);
+    border: none;
+    padding: 0 20px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: var(--shadow-accent);
+    transition: var(--transition-normal);
+}
+
+.btn-send:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-accent-lg);
+    filter: brightness(1.1);
+}
+
+.btn-send:active {
+    transform: scale(0.98);
+}
+
+/* ==========================================================================
+   RIGHT PANE: LIVE BRAIN & TELEMETRY
+   ========================================================================== */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.metric-card {
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: var(--shadow-sm);
+}
+
+.metric-title {
+    font-size: 11px;
+    color: var(--muted-foreground);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.metric-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--foreground);
+}
+
+/* Monospace Logger Terminal */
+.console-wrapper {
+    flex-grow: 1;
+    background-color: #0F172A; /* Inverted Section background */
+    border-radius: var(--radius-md);
+    border: 1px solid #1E293B;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.console-grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 24px 24px;
+    pointer-events: none;
+}
+
+.console-body {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #E2E8F0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    z-index: 1;
+}
+
+.console-placeholder {
+    margin: auto;
+    text-align: center;
+    color: #64748B;
+    max-width: 280px;
+}
+
+.terminal-icon {
+    font-size: 32px;
+    color: #334155;
+    margin-bottom: 12px;
+}
+
+.terminal-sub {
+    font-size: 10px;
+    margin-top: 6px;
+}
+
+/* Logging Event Structures */
+.log-block {
+    border-left: 2px solid #334155;
+    padding-left: 14px;
+    animation: fadeIn 0.2s ease-out forwards;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: #64748B;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.log-title {
+    font-weight: 600;
+}
+
+.log-title.agent-start { color: var(--accent-secondary); }
+.log-title.llm-response { color: #A78BFA; }
+.log-title.tool-call { color: #F59E0B; }
+.log-title.tool-result { color: #10B981; }
+.log-title.agent-end { color: #EC4899; }
+
+.log-body {
+    white-space: pre-wrap;
+    line-height: 1.5;
+}
+
+.log-body.thought {
+    color: #E2E8F0;
+}
+
+.log-body.action {
+    color: #FBBF24;
+    font-weight: 500;
+}
+
+.log-body.observation {
+    color: #34D399;
+}
+
+.log-body.json-data {
+    background-color: #1E293B;
+    border: 1px solid #334155;
+    padding: 10px;
+    border-radius: var(--radius-sm);
+    margin-top: 6px;
+    font-size: 11px;
+    color: #94A3B8;
+    overflow-x: auto;
+}
+
+/* ==========================================================================
+   ANIMATIONS & EFFECTS
+   ========================================================================== */
+/* Pulsing Indicators */
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #10B981;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 rgba(16, 185, 129, 0.4);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+.label-dot.pulsing {
+    background-color: var(--accent);
+    animation: pulseAccent 2s infinite;
+}
+
+@keyframes pulseAccent {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 82, 255, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(0, 82, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 82, 255, 0);
+    }
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN Breakpoints
+   ========================================================================== */
+@media (max-width: 1024px) {
+    .app-main {
+        height: auto;
+        overflow-y: visible;
+    }
+    
+    .app-container {
+        height: auto;
+        padding-bottom: 40px;
+    }
+    
+    .pane-chat {
+        height: 600px;
+    }
+}
+
+@media (max-width: 640px) {
+    .app-header {
+        flex-direction: column;
+        height: auto;
+        padding: 16px 0;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    .header-status {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .btn-send .btn-text {
+        display: none;
+    }
+    
+    .pane-chat {
+        height: 500px;
+        padding: 16px;
+    }
+}

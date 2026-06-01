@@ -4,6 +4,7 @@ from typing import List, Dict, Any, Optional, Union
 from src.core.llm_provider import LLMProvider
 from src.tools.base import BaseTool
 from src.telemetry.logger import logger
+from src.telemetry.metrics import tracker
 
 class ReActAgent:
     def __init__(self, llm: LLMProvider, tools: List[Union[BaseTool, Dict[str, Any]]], max_steps: int = 5):
@@ -42,7 +43,7 @@ Rules:
 - If a tool returns an error, acknowledge it and try again or ask the patient for clarification."""
 
     def run(self, user_input: str) -> str:
-        logger.log_event("AGENT_START", {"input": user_input, "model": self.llm.model_name})
+        logger.log_event("AGENT_START", {"user_input": user_input, "model": self.llm.model_name})
 
         current_prompt = user_input
         steps = 0
@@ -50,7 +51,19 @@ Rules:
         while steps < self.max_steps:
             result = self.llm.generate(current_prompt, system_prompt=self.get_system_prompt())
             content = result["content"]
-            logger.log_event("LLM_RESPONSE", {"step": steps, "content": content, "usage": result.get("usage")})
+            usage = result.get("usage") or {}
+            latency_ms = result.get("latency_ms", 0)
+            provider = result.get("provider", "unknown")
+
+            # Emit LLM_METRIC so Phase 4 Failure Analysis can inspect per-step costs
+            tracker.track_request(
+                provider=provider,
+                model=self.llm.model_name,
+                usage=usage,
+                latency_ms=latency_ms,
+            )
+
+            logger.log_event("LLM_RESPONSE", {"step": steps, "content": content, "usage": usage})
 
             # Check for Final Answer
             if "Final Answer:" in content:

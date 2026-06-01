@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedTriage AI Hub - AI Agent Tiếp Tân Phòng Khám</title>
+    <!-- Load Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Calistoga&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-house-medical"></i>
+                </div>
+                <div class="brand-text">
+                    <h1>MedTriage <span class="gradient-text">AI Hub</span></h1>
+                    <p class="brand-subtitle">Smart Receptionist & Patient Triage Agent</p>
+                </div>
+            </div>
+            
+            <div class="header-status">
+                <div class="status-badge">
+                    <span class="pulse-dot"></span>
+                    <span class="badge-label">Active Provider:</span>
+                    <span class="badge-value" id="provider-badge">Google Gemini</span>
+                </div>
+                <div class="status-badge model-badge">
+                    <span class="badge-label">Model:</span>
+                    <span class="badge-value" id="model-badge">gemini-2.5-flash</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="app-main">
+            <!-- Left Pane: Patient Chat -->
+            <section class="pane-chat">
+                <div class="pane-header">
+                    <div class="section-label">
+                        <span class="label-dot"></span>
+                        <span class="label-text">Patient Portal</span>
+                    </div>
+                    <h2>Trò chuyện với tiếp tân</h2>
+                </div>
+
+                <!-- Chat Log -->
+                <div class="chat-history" id="chat-history">
+                    <!-- Default Welcome Message -->
+                    <div class="message system-message">
+                        <div class="message-avatar">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>Xin chào! Tôi là <strong>Tiếp tân y tế thông minh</strong> tại phòng khám. Tôi có thể giúp bạn:</p>
+                            <ul>
+                                <li>Phân tích triệu chứng và giới thiệu chuyên khoa khám thích hợp.</li>
+                                <li>Tra cứu lịch trực trống của các bác sĩ.</li>
+                                <li>Hỗ trợ đăng ký và xác nhận lịch hẹn khám ngay lập tức.</li>
+                            </ul>
+                            <p>Hãy miêu tả chi tiết tình trạng sức khỏe hoặc triệu chứng của bạn để chúng ta bắt đầu nhé!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Suggestions -->
+                <div class="chat-suggestions">
+                    <button class="suggestion-tag" onclick="useSuggestion(this)">Tôi bị đau bụng nhiều và đầy hơi khó tiêu</button>
+                    <button class="suggestion-tag" onclick="useSuggestion(this)">Bị ho khan, sổ mũi và hơi khó thở</button>
+                    <button class="suggestion-tag" onclick="useSuggestion(this)">Thường xuyên đau đầu mất ngủ chóng mặt</button>
+                </div>
+
+                <!-- Chat Input Form -->
+                <form class="chat-form" id="chat-form">
+                    <div class="input-wrapper">
+                        <input type="text" id="chat-input" placeholder="Mô tả triệu chứng hoặc yêu cầu đặt lịch..." autocomplete="off" required>
+                        <button type="submit" class="btn-send" id="btn-submit">
+                            <span class="btn-text">Gửi tin</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+
+        </main>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
