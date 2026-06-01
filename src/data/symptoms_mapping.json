@@ -1,0 +1,22 @@
+{
+  "khoa_tieu_hoa": {
+    "specialty_name": "Khoa Tiêu hóa",
+    "keywords": ["đau bụng", "buồn nôn", "tiêu chảy", "ợ chua", "đầy hơi", "hải sản", "dạ dày", "khó tiêu"]
+  },
+  "khoa_ho_hap": {
+    "specialty_name": "Khoa Hô hấp",
+    "keywords": ["ho", "khó thở", "sổ mũi", "tức ngực", "viêm họng", "hen suyễn", "cảm cúm", "đờm"]
+  },
+  "khoa_than_kinh": {
+    "specialty_name": "Khoa Thần kinh",
+    "keywords": ["đau đầu", "chóng mặt", "mất ngủ", "tê bì", "đau nửa đầu", "co giật", "suy nhược"]
+  },
+  "khoa_xuong_khop": {
+    "specialty_name": "Khoa Xương khớp",
+    "keywords": ["đau lưng", "nhức mỏi", "trật khớp", "sưng khớp", "gout", "gãy xương", "bong gân"]
+  },
+  "khoa_da_lieu": {
+    "specialty_name": "Khoa Da liễu",
+    "keywords": ["ngứa", "nổi mẩn", "dị ứng", "phát ban", "mụn", "bong tróc"]
+  }
+}

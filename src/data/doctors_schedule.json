@@ -1,0 +1,47 @@
+[
+  {
+    "doctor_id": "D001",
+    "doctor_name": "BS. Trần Văn A",
+    "specialty": "Khoa Tiêu hóa",
+    "schedule": {
+      "2026-06-02": {
+        "morning": ["08:00", "09:30", "10:00"],
+        "afternoon": ["14:00", "15:30"]
+      },
+      "2026-06-03": {
+        "morning": [],
+        "afternoon": ["13:30", "16:00"]
+      }
+    }
+  },
+  {
+    "doctor_id": "D002",
+    "doctor_name": "BS. Lê Thị B",
+    "specialty": "Khoa Hô hấp",
+    "schedule": {
+      "2026-06-02": {
+        "morning": ["07:30", "09:15"],
+        "afternoon": []
+      },
+      "2026-06-04": {
+        "morning": ["08:30", "10:15", "11:00"],
+        "afternoon": ["14:15"]
+      }
+    }
+  },
+  {
+    "doctor_id": "D003",
+    "doctor_name": "BS. Phạm Quang C",
+    "specialty": "Khoa Thần kinh",
+    "schedule": {
+      "2026-06-02": {
+        "morning": [],
+        "afternoon": ["14:30", "15:00", "16:30"]
+      },
+      "2026-06-03": {
+        "morning": ["08:15", "09:45"],
+        "afternoon": ["13:45", "15:15"]
+      }
+    }
+  }
+]
