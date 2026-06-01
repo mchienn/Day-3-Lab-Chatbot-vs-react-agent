@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedTriage AI Hub - AI Agent Tiếp Tân Phòng Khám</title>
+    <title>Vinmec Smart Clinic - Hệ Thống Tiếp Tân Thông Minh</title>
+    <meta name="description" content="Hệ thống AI tiếp tân thông minh của Bệnh viện Đa khoa Quốc tế Vinmec — phân tích triệu chứng, kiểm tra lịch bác sĩ và đặt lịch hẹn khám bệnh 24/7.">
     <!-- Load Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,86 +14,154 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header -->
-        <header class="app-header">
-            <div class="header-brand">
-                <div class="brand-icon">
-                    <i class="fa-solid fa-house-medical"></i>
+    <div class="app-shell">
+
+        <!-- ═══════════════════════════════════════════
+             SIDEBAR — Chat Session History
+        ════════════════════════════════════════════ -->
+        <aside class="sidebar" id="sidebar">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <div class="sidebar-brand">
+                    <div class="sidebar-brand-icon">
+                        <i class="fa-solid fa-hospital"></i>
+                    </div>
+                    <span class="sidebar-brand-name">Vinmec</span>
                 </div>
-                <div class="brand-text">
-                    <h1>MedTriage <span class="gradient-text">AI Hub</span></h1>
-                    <p class="brand-subtitle">Smart Receptionist & Patient Triage Agent</p>
+                <button class="sidebar-toggle-btn" id="sidebar-close-btn" title="Đóng sidebar" aria-label="Đóng sidebar">
+                    <i class="fa-solid fa-sidebar"></i>
+                </button>
+            </div>
+
+            <!-- New Chat Button -->
+            <div class="sidebar-new-chat">
+                <button class="btn-new-chat" id="btn-new-chat" onclick="createNewSession()">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Cuộc trò chuyện mới</span>
+                </button>
+            </div>
+
+            <!-- Sessions List -->
+            <div class="sidebar-sessions-label">Lịch sử trò chuyện</div>
+            <div class="sidebar-sessions" id="sidebar-sessions">
+                <!-- Session items rendered by JS -->
+                <div class="sessions-empty" id="sessions-empty">
+                    <i class="fa-regular fa-comment-dots"></i>
+                    <p>Chưa có cuộc trò chuyện nào</p>
                 </div>
             </div>
-            
-            <div class="header-status">
-                <div class="status-badge">
-                    <span class="pulse-dot"></span>
-                    <span class="badge-label">Active Provider:</span>
-                    <span class="badge-value" id="provider-badge">Google Gemini</span>
-                </div>
-                <div class="status-badge model-badge">
-                    <span class="badge-label">Model:</span>
-                    <span class="badge-value" id="model-badge">gemini-2.5-flash</span>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <div class="sidebar-footer-info">
+                    <span class="badge-label">Provider:</span>
+                    <span class="badge-value" id="provider-badge-sidebar">Google Gemini</span>
                 </div>
             </div>
-        </header>
+        </aside>
 
-        <!-- Main Workspace -->
-        <main class="app-main">
-            <!-- Left Pane: Patient Chat -->
-            <section class="pane-chat">
-                <div class="pane-header">
-                    <div class="section-label">
-                        <span class="label-dot"></span>
-                        <span class="label-text">Patient Portal</span>
-                    </div>
-                    <h2>Trò chuyện với tiếp tân</h2>
-                </div>
+        <!-- Sidebar overlay (mobile) -->
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
 
-                <!-- Chat Log -->
-                <div class="chat-history" id="chat-history">
-                    <!-- Default Welcome Message -->
-                    <div class="message system-message">
-                        <div class="message-avatar">
-                            <i class="fa-solid fa-robot"></i>
+        <!-- ═══════════════════════════════════════════
+             MAIN CONTENT AREA
+        ════════════════════════════════════════════ -->
+        <div class="main-content" id="main-content">
+
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle-btn" id="sidebar-open-btn" title="Mở sidebar" aria-label="Mở sidebar">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="header-brand">
+                        <div class="brand-icon">
+                            <i class="fa-solid fa-hospital"></i>
                         </div>
-                        <div class="message-content">
-                            <p>Xin chào! Tôi là <strong>Tiếp tân y tế thông minh</strong> tại phòng khám. Tôi có thể giúp bạn:</p>
-                            <ul>
-                                <li>Phân tích triệu chứng và giới thiệu chuyên khoa khám thích hợp.</li>
-                                <li>Tra cứu lịch trực trống của các bác sĩ.</li>
-                                <li>Hỗ trợ đăng ký và xác nhận lịch hẹn khám ngay lập tức.</li>
-                            </ul>
-                            <p>Hãy miêu tả chi tiết tình trạng sức khỏe hoặc triệu chứng của bạn để chúng ta bắt đầu nhé!</p>
+                        <div class="brand-text">
+                            <h1>Vinmec <span class="gradient-text">Smart Clinic</span></h1>
+                            <p class="brand-subtitle">Hệ thống Tiếp tân &amp; Phân loại Bệnh nhân thông minh</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quick Suggestions -->
-                <div class="chat-suggestions">
-                    <button class="suggestion-tag" onclick="useSuggestion(this)">Tôi bị đau bụng nhiều và đầy hơi khó tiêu</button>
-                    <button class="suggestion-tag" onclick="useSuggestion(this)">Bị ho khan, sổ mũi và hơi khó thở</button>
-                    <button class="suggestion-tag" onclick="useSuggestion(this)">Thường xuyên đau đầu mất ngủ chóng mặt</button>
-                </div>
-
-                <!-- Chat Input Form -->
-                <form class="chat-form" id="chat-form">
-                    <div class="input-wrapper">
-                        <input type="text" id="chat-input" placeholder="Mô tả triệu chứng hoặc yêu cầu đặt lịch..." autocomplete="off" required>
-                        <button type="submit" class="btn-send" id="btn-submit">
-                            <span class="btn-text">Gửi tin</span>
-                            <i class="fa-solid fa-paper-plane"></i>
-                        </button>
+                <div class="header-status">
+                    <div class="status-badge">
+                        <span class="pulse-dot"></span>
+                        <span class="badge-label">Provider:</span>
+                        <span class="badge-value" id="provider-badge">Google Gemini</span>
                     </div>
-                </form>
-            </section>
+                    <div class="status-badge model-badge">
+                        <span class="badge-label">Model:</span>
+                        <span class="badge-value" id="model-badge">gemini-2.5-flash</span>
+                    </div>
+                </div>
+            </header>
 
+            <!-- Main Workspace -->
+            <main class="app-main">
+                <!-- Chat Pane -->
+                <section class="pane-chat">
+                    <div class="pane-header">
+                        <div class="section-label">
+                            <span class="label-dot"></span>
+                            <span class="label-text">Cổng Bệnh nhân Vinmec</span>
+                        </div>
+                        <div class="pane-header-row">
+                            <h2 id="session-title-display">Trò chuyện với Vinmec AI</h2>
+                            <button class="btn-rename-session" id="btn-rename-session" title="Đổi tên cuộc trò chuyện" style="display:none;" onclick="renameCurrentSession()">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </div>
+                    </div>
 
-        </main>
+                    <!-- Chat Log -->
+                    <div class="chat-history" id="chat-history">
+                        <!-- Default Welcome Message -->
+                        <div class="message system-message">
+                            <div class="message-avatar">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Xin chào! Tôi là <strong>Trợ lý AI của Bệnh viện Đa khoa Quốc tế Vinmec</strong>. Tôi có thể hỗ trợ bạn:</p>
+                                <ul>
+                                    <li>🩺 Phân tích triệu chứng và tư vấn chuyên khoa phù hợp tại Vinmec.</li>
+                                    <li>📅 Tra cứu lịch khám và kiểm tra bác sĩ trực tại các khoa.</li>
+                                    <li>✅ Đặt lịch hẹn khám và nhận mã xác nhận ngay lập tức.</li>
+                                </ul>
+                                <p>Vui lòng mô tả triệu chứng hoặc nhu cầu khám bệnh của bạn để tôi hỗ trợ nhé!</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Suggestions -->
+                    <div class="chat-suggestions" id="chat-suggestions">
+                        <button class="suggestion-tag" onclick="useSuggestion(this)">Tôi bị đau bụng, đầy hơi, khó tiêu</button>
+                        <button class="suggestion-tag" onclick="useSuggestion(this)">Ho khan, sổ mũi và khó thở, tôi cần gặp bác sĩ</button>
+                        <button class="suggestion-tag" onclick="useSuggestion(this)">Hay đau đầu, mất ngủ, chóng mặt</button>
+                    </div>
+
+                    <!-- Chat Input Form -->
+                    <form class="chat-form" id="chat-form">
+                        <div class="input-wrapper">
+                            <input type="text" id="chat-input" placeholder="Mô tả triệu chứng hoặc yêu cầu đặt lịch khám tại Vinmec..." autocomplete="off" required>
+                            <button type="submit" class="btn-send" id="btn-submit">
+                                <span class="btn-text">Gửi tin</span>
+                                <i class="fa-solid fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </form>
+                </section>
+            </main>
+        </div><!-- /.main-content -->
+    </div><!-- /.app-shell -->
+
+    <!-- Context menu for session actions -->
+    <div class="session-context-menu" id="session-context-menu" style="display:none;">
+        <button class="ctx-menu-item" id="ctx-rename"><i class="fa-solid fa-pen"></i> Đổi tên</button>
+        <button class="ctx-menu-item ctx-delete" id="ctx-delete"><i class="fa-solid fa-trash"></i> Xóa</button>
     </div>
-    
+
     <script src="app.js"></script>
 </body>
 </html>

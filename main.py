@@ -5,8 +5,9 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 import os
 import json
+import uuid
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -30,54 +31,194 @@ from src.tools.medical_tools import (
     BookAppointmentTool
 )
 
-app = FastAPI(title="Smart Medical Triage & Booking AI Agent")
+app = FastAPI(title="Vinmec Smart Clinic - Hệ Thống Tiếp Tân Thông Minh")
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Session storage helpers
+# ─────────────────────────────────────────────────────────────────────────────
+SESSIONS_DIR = "chat_sessions"
+os.makedirs(SESSIONS_DIR, exist_ok=True)
+
+
+def _session_path(session_id: str) -> str:
+    return os.path.join(SESSIONS_DIR, f"{session_id}.json")
+
+
+def _load_session(session_id: str) -> Dict[str, Any]:
+    path = _session_path(session_id)
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found.")
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _save_session(data: Dict[str, Any]) -> None:
+    path = _session_path(data["id"])
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+
+def _list_sessions() -> List[Dict[str, Any]]:
+    sessions = []
+    for fname in os.listdir(SESSIONS_DIR):
+        if fname.endswith(".json"):
+            fpath = os.path.join(SESSIONS_DIR, fname)
+            try:
+                with open(fpath, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                # Return summary only (no full messages list)
+                sessions.append({
+                    "id": data["id"],
+                    "title": data.get("title", "Cuộc trò chuyện mới"),
+                    "created_at": data.get("created_at", ""),
+                    "updated_at": data.get("updated_at", ""),
+                    "message_count": len(data.get("messages", [])),
+                })
+            except Exception:
+                pass
+    # Sort newest first
+    sessions.sort(key=lambda s: s.get("updated_at", ""), reverse=True)
+    return sessions
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Pydantic models
+# ─────────────────────────────────────────────────────────────────────────────
 class ChatRequest(BaseModel):
     message: str
+    session_id: Optional[str] = None   # ← NEW: attach message to a session
+
 
 class ChatResponse(BaseModel):
     reply: str
     logs: List[Dict[str, Any]]
+    session_id: str                     # ← NEW: returned so frontend can track
 
+
+class SessionCreateRequest(BaseModel):
+    title: Optional[str] = "Cuộc trò chuyện mới"
+
+
+class SessionRenameRequest(BaseModel):
+    title: str
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LLM provider factory
+# ─────────────────────────────────────────────────────────────────────────────
 def get_llm_provider():
-    """
-    Instantiates the LLM provider configured in the .env file.
-    """
+    """Instantiates the LLM provider configured in the .env file."""
     provider_name = os.getenv("DEFAULT_PROVIDER", "google").lower()
     model_name = os.getenv("DEFAULT_MODEL", "gemini-2.5-flash")
-    
+
     if provider_name == "openai":
         api_key = os.getenv("OPENAI_API_KEY")
         if not api_key or api_key == "your_openai_api_key_here":
             raise ValueError("OPENAI_API_KEY is not set or is invalid in .env")
         return OpenAIProvider(model_name=model_name, api_key=api_key)
-        
+
     elif provider_name == "google":
         api_key = os.getenv("GEMINI_API_KEY")
         if not api_key or api_key == "your_gemini_api_key_here":
             raise ValueError("GEMINI_API_KEY is not set or is invalid in .env")
         return GeminiProvider(model_name=model_name, api_key=api_key)
-        
+
     elif provider_name == "local":
         if not LOCAL_PROVIDER_AVAILABLE:
-            raise ValueError("Local provider requires 'llama-cpp-python' package which is not installed or failed to import.")
+            raise ValueError("Local provider requires 'llama-cpp-python' package.")
         model_path = os.getenv("LOCAL_MODEL_PATH")
         if not model_path or not os.path.exists(model_path):
-            raise ValueError(f"Local model path '{model_path}' not found. Please download the GGUF model first.")
+            raise ValueError(f"Local model path '{model_path}' not found.")
         return LocalProvider(model_path=model_path)
-        
+
     else:
         raise ValueError(f"Unsupported provider: {provider_name}")
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Session API endpoints
+# ─────────────────────────────────────────────────────────────────────────────
+@app.get("/api/sessions")
+async def list_sessions():
+    """List all chat sessions (summaries only, newest first)."""
+    return {"sessions": _list_sessions()}
+
+
+@app.post("/api/sessions", status_code=201)
+async def create_session(req: SessionCreateRequest):
+    """Create a new empty chat session."""
+    now = datetime.utcnow().isoformat()
+    session = {
+        "id": str(uuid.uuid4()),
+        "title": req.title,
+        "created_at": now,
+        "updated_at": now,
+        "messages": [],
+    }
+    _save_session(session)
+    return {"id": session["id"], "title": session["title"], "created_at": now}
+
+
+@app.get("/api/sessions/{session_id}")
+async def get_session(session_id: str):
+    """Get full session data including all messages."""
+    return _load_session(session_id)
+
+
+@app.put("/api/sessions/{session_id}")
+async def rename_session(session_id: str, req: SessionRenameRequest):
+    """Rename an existing chat session."""
+    session = _load_session(session_id)
+    session["title"] = req.title.strip()[:80]   # cap at 80 chars
+    session["updated_at"] = datetime.utcnow().isoformat()
+    _save_session(session)
+    return {"id": session_id, "title": session["title"]}
+
+
+@app.delete("/api/sessions/{session_id}", status_code=204)
+async def delete_session(session_id: str):
+    """Delete a chat session and its message history."""
+    path = _session_path(session_id)
+    if not os.path.exists(path):
+        raise HTTPException(status_code=404, detail=f"Session '{session_id}' not found.")
+    os.remove(path)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Chat endpoint (updated to support sessions)
+# ─────────────────────────────────────────────────────────────────────────────
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
     """
-    Exposes a chat endpoint to run the ReAct Agent on the user message
-    and returns both the agent reply and the generated telemetry logs.
+    Runs the ReAct Agent on the user message and returns the agent reply
+    plus telemetry logs. If session_id is provided the messages are persisted.
     """
     user_message = request.message.strip()
     if not user_message:
         raise HTTPException(status_code=400, detail="Message cannot be empty")
+
+    # ── Resolve session ──────────────────────────────────────────────────────
+    session_id = request.session_id
+    session: Optional[Dict[str, Any]] = None
+
+    if session_id:
+        try:
+            session = _load_session(session_id)
+        except HTTPException:
+            session_id = None   # Session not found — create a new one below
+
+    if not session_id:
+        # Auto-create a session named after the first message
+        now = datetime.utcnow().isoformat()
+        auto_title = user_message[:50] + ("…" if len(user_message) > 50 else "")
+        session = {
+            "id": str(uuid.uuid4()),
+            "title": auto_title,
+            "created_at": now,
+            "updated_at": now,
+            "messages": [],
+        }
+        session_id = session["id"]
 
     try:
         # 1. Initialize LLM Provider
@@ -90,13 +231,12 @@ async def chat_endpoint(request: ChatRequest):
             BookAppointmentTool().to_agent_dict()
         ]
 
-        # 3. Instantiate ReAct Agent (limit to 5 steps max to prevent infinite loops)
+        # 3. Instantiate ReAct Agent
         agent = ReActAgent(llm=provider, tools=tools, max_steps=5)
 
-        # 4. Prepare log file tracking to capture events in real time
+        # 4. Capture log file position before running
         log_dir = "logs"
         log_file_path = os.path.join(log_dir, f"{datetime.utcnow().strftime('%Y-%m-%d')}.log")
-        
         start_pos = 0
         if os.path.exists(log_file_path):
             start_pos = os.path.getsize(log_file_path)
@@ -117,18 +257,40 @@ async def chat_endpoint(request: ChatRequest):
                         except Exception:
                             pass
 
-        return ChatResponse(reply=reply, logs=new_logs)
+        # 7. Persist messages into session
+        now = datetime.utcnow().isoformat()
+        session["messages"].append({
+            "role": "user",
+            "content": user_message,
+            "timestamp": now,
+        })
+        session["messages"].append({
+            "role": "agent",
+            "content": reply,
+            "timestamp": now,
+        })
+        session["updated_at"] = now
+
+        # Auto-set title from first user message if still default
+        if session["title"] in ("Cuộc trò chuyện mới", "") and user_message:
+            session["title"] = user_message[:50] + ("…" if len(user_message) > 50 else "")
+
+        _save_session(session)
+
+        return ChatResponse(reply=reply, logs=new_logs, session_id=session_id)
 
     except ValueError as val_err:
         raise HTTPException(status_code=400, detail=str(val_err))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Internal Server Error: {str(e)}")
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Config endpoint
+# ─────────────────────────────────────────────────────────────────────────────
 @app.get("/api/config")
 async def get_config():
-    """
-    Returns the configured LLM provider and model name to the frontend.
-    """
+    """Returns the configured LLM provider and model name to the frontend."""
     provider_name = os.getenv("DEFAULT_PROVIDER", "google").lower()
     model_name = os.getenv("DEFAULT_MODEL", "gemini-2.5-flash")
     provider_map = {
@@ -141,12 +303,11 @@ async def get_config():
         "model": model_name
     }
 
-# Mount static files to serve the HTML/CSS/JS frontend
-# Make sure static directory exists
+
+# Mount static files
 os.makedirs("static", exist_ok=True)
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
 
 if __name__ == "__main__":
     import uvicorn
-    # Start server on local port 8000
     uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
