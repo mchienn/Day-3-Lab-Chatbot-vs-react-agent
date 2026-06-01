@@ -1,0 +1,48 @@
+{
+  "id": "c241447c-5dc6-46dc-87f1-10e4a9b39f27",
+  "title": "Tôi bị đau bụng, đầy hơi, khó tiêu",
+  "created_at": "2026-06-01T10:15:38.495252",
+  "updated_at": "2026-06-01T10:16:27.127441",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Tôi bị đau bụng, đầy hơi, khó tiêu",
+      "timestamp": "2026-06-01T10:15:42.030107"
+    },
+    {
+      "role": "agent",
+      "content": "Bạn muốn đặt lịch khám vào ngày nào ạ?",
+      "timestamp": "2026-06-01T10:15:42.030107"
+    },
+    {
+      "role": "user",
+      "content": "tôi sẽ được vào khoa nào",
+      "timestamp": "2026-06-01T10:15:53.483283"
+    },
+    {
+      "role": "agent",
+      "content": "Với các triệu chứng đau bụng, đầy hơi, khó tiêu, bạn sẽ được khám tại Khoa Tiêu hóa. Bạn muốn đặt lịch khám vào ngày nào ạ?",
+      "timestamp": "2026-06-01T10:15:53.483283"
+    },
+    {
+      "role": "user",
+      "content": "ngày mai",
+      "timestamp": "2026-06-01T10:16:01.901754"
+    },
+    {
+      "role": "agent",
+      "content": "Rất tiếc, Khoa Tiêu hóa không có lịch khám vào ngày mai (2024-05-16). Bạn có muốn đặt lịch vào ngày khác không ạ?",
+      "timestamp": "2026-06-01T10:16:01.901754"
+    },
+    {
+      "role": "user",
+      "content": "có những ngày nào trống và có lịch",
+      "timestamp": "2026-06-01T10:16:27.127441"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:16:27.127441"
+    }
+  ]
+}
