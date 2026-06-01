@@ -33,6 +33,7 @@ from src.tools.medical_tools import (
     CheckDoctorAvailabilityTool,
     BookAppointmentTool,
 )
+from src.telemetry.logger import logger
 
 
 def create_provider() -> LLMProvider:
@@ -84,6 +85,9 @@ def main():
         return
 
     agent = create_agent(llm)
+    session_count = 0
+
+    logger.log_event("CHATBOT_START", {"provider": llm.model_name})
 
     print("\nType your symptoms or 'exit' to quit.")
     print("=" * 60)
@@ -97,6 +101,9 @@ def main():
                 print("Goodbye!")
                 break
 
+            session_count += 1
+            logger.log_event("USER_INPUT", {"session": session_count, "input": user_input})
+
             start = time.time()
             result = agent.run(user_input)
             duration = time.time() - start
@@ -108,7 +115,10 @@ def main():
             print("\nGoodbye!")
             break
         except Exception as e:
+            logger.log_event("ERROR", {"error": str(e)})
             print(f"[ERROR] {e}")
+
+    logger.log_event("CHATBOT_END", {"total_sessions": session_count})
 
 
 if __name__ == "__main__":
