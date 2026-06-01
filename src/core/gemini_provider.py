@@ -1,49 +1,77 @@
-import os
 import time
 import google.generativeai as genai
 from typing import Dict, Any, Optional, Generator
+from google.generativeai.types import generation_types
 from src.core.llm_provider import LLMProvider
 
 class GeminiProvider(LLMProvider):
-    def __init__(self, model_name: str = "gemini-1.5-flash", api_key: Optional[str] = None):
+    def __init__(self, model_name: str = "gemini-2.5-flash", api_key: Optional[str] = None):
         super().__init__(model_name, api_key)
         genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel(model_name)
+        
+        # setup generationconfig for agent through logic, not create
+        self.config = genai.GenerationConfig(
+            temperature=0.0,
+            top_p=0.95,
+            top_k=40
+        )
 
     def generate(self, prompt: str, system_prompt: Optional[str] = None) -> Dict[str, Any]:
         start_time = time.time()
         
-        # In Gemini, system instruction is passed during model initialization or as a prefix
-        # For simplicity in this lab, we'll prepend it if provided
-        full_prompt = prompt
-        if system_prompt:
-            full_prompt = f"System: {system_prompt}\n\nUser: {prompt}"
+        try:
+            # created model with system instruction 
+            if system_prompt:
+                model = genai.GenerativeModel(
+                    model_name=self.model_name,
+                    system_instruction=system_prompt
+                )
+            else:
+                model = genai.GenerativeModel(model_name=self.model_name)
 
-        response = self.model.generate_content(full_prompt)
+            response = model.generate_content(
+                prompt,
+                generation_config=self.config
+            )
 
-        end_time = time.time()
-        latency_ms = int((end_time - start_time) * 1000)
+            end_time = time.time()
+            latency_ms = int((end_time - start_time) * 1000)
 
-        # Gemini usage data is in response.usage_metadata
-        content = response.text
-        usage = {
-            "prompt_tokens": response.usage_metadata.prompt_token_count,
-            "completion_tokens": response.usage_metadata.candidates_token_count,
-            "total_tokens": response.usage_metadata.total_token_count
-        }
+            usage_metadata = getattr(response, 'usage_metadata', None)
+            usage = {
+                "prompt_tokens": usage_metadata.prompt_token_count if usage_metadata else 0,
+                "completion_tokens": usage_metadata.candidates_token_count if usage_metadata else 0,
+                "total_tokens": usage_metadata.total_token_count if usage_metadata else 0
+            }
 
-        return {
-            "content": content,
-            "usage": usage,
-            "latency_ms": latency_ms,
-            "provider": "google"
-        }
+            return {
+                "content": response.text,
+                "usage": usage,
+                "latency_ms": latency_ms,
+                "provider": "google"
+            }
+            
+        except generation_types.StopCandidateException as e:
+            return {"error": "Content flagged by safety filters.", "content": ""}
+        except Exception as e:
+            return {"error": f"Error connected Gemini API: {str(e)}", "content": ""}
 
     def stream(self, prompt: str, system_prompt: Optional[str] = None) -> Generator[str, None, None]:
-        full_prompt = prompt
         if system_prompt:
-            full_prompt = f"System: {system_prompt}\n\nUser: {prompt}"
+            model = genai.GenerativeModel(
+                model_name=self.model_name,
+                system_instruction=system_prompt
+            )
+        else:
+            model = genai.GenerativeModel(model_name=self.model_name)
 
-        response = self.model.generate_content(full_prompt, stream=True)
-        for chunk in response:
-            yield chunk.text
+        try:
+            response = model.generate_content(
+                prompt, 
+                generation_config=self.config,
+                stream=True
+            )
+            for chunk in response:
+                yield chunk.text
+        except Exception as e:
+            yield f"\n[Stream Error: {str(e)}]"
