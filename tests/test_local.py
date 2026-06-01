@@ -1,6 +1,10 @@
 import os
 import sys
+import pytest
 from dotenv import load_dotenv
+
+# Skip test if llama_cpp is not installed
+pytest.importorskip("llama_cpp")
 
 # Add src to path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

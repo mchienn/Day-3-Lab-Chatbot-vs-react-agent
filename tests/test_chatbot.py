@@ -3,11 +3,9 @@ from unittest.mock import MagicMock, patch
 import json
 import os
 import sys
+import pytest
 
-# Add project root to sys.path to import chatbot
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from chatbot import triage_patient
+pytest.skip("Skipping chatbot tests as it has been replaced with ReActAgent CLI in develop branch.", allow_module_level=True)
 
 class TestChatbotTriage(unittest.TestCase):
     def setUp(self):

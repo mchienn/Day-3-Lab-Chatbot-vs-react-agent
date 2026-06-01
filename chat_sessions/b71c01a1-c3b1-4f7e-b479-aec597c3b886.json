@@ -1,0 +1,28 @@
+{
+  "id": "b71c01a1-c3b1-4f7e-b479-aec597c3b886",
+  "title": "Ho khan, sổ mũi và khó thở, tôi cần gặp bác sĩ",
+  "created_at": "2026-06-01T10:26:30.919559",
+  "updated_at": "2026-06-01T10:26:45.311604",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Ho khan, sổ mũi và khó thở, tôi cần gặp bác sĩ",
+      "timestamp": "2026-06-01T10:26:32.804128"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:26:32.804128"
+    },
+    {
+      "role": "user",
+      "content": "Tôi bị đau bụng, đầy hơi, khó tiêu",
+      "timestamp": "2026-06-01T10:26:45.311604"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:26:45.311604"
+    }
+  ]
+}

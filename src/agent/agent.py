@@ -49,6 +49,11 @@ class ReActAgent:
             [f"- {t['name']}: {t['description']}" for t in self.tools]
         )
 
+        from datetime import datetime
+        now = datetime.now()
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        today_str = f"{now.strftime('%Y-%m-%d')} ({days[now.weekday()]})"
+
         return f"""You are a smart medical receptionist at a clinic. Your job is to listen to patient symptoms, reason about the correct medical specialty, and help book an appointment.
 
 You have access to the following tools:
@@ -80,11 +85,12 @@ SYMPTOM ANALYSIS RULES (CRITICAL):
   * "ngứa, nổi mẩn" → Use AnalyzeSymptomTool
   * "đau lưng" → Use AnalyzeSymptomTool
 - Only ask for clarification if the input is truly vague like "tôi không khỏe" or "tôi thấy mệt" with no specific symptoms.
+- In your Final Answer to the patient, you MUST clearly state which medical specialty/department you have identified for their symptoms (e.g., "Dựa trên triệu chứng của bạn, tôi đề xuất khám tại Khoa Tiêu hóa. Bạn muốn đặt lịch vào ngày nào ạ?"). Do not omit the department name.
 
 CONTEXT AWARENESS:
 - Check the CONVERSATION HISTORY in the prompt carefully.
 - If the patient previously mentioned symptoms and now provides a date/time, use the previously identified specialty.
-- If the patient says "ngày mai" (tomorrow), calculate the actual date based on today.
+- Today's date is {today_str}. If the patient says "ngày mai" (tomorrow) or mentions other relative dates (e.g. "thứ 3", "ngày kia"), calculate the actual date based on this reference date (e.g. if today is 2026-06-01 (Monday), "ngày mai" is 2026-06-02, "ngày kia" is 2026-06-03, "thứ 4" is 2026-06-03).
 - Do NOT ask for symptoms again if already provided in the conversation history.
 
 IMPORTANT CONSTRAINTS:
@@ -190,23 +196,7 @@ IMPORTANT: Based on the conversation history above, the patient has already prov
                 "latency_ms": step_latency
             })
 
-            # Check for Final Answer
-            if "Final Answer:" in content:
-                final = content.split("Final Answer:")[-1].strip()
-                if final:
-                    # Save to conversation history
-                    self.conversation_history.append({
-                        "user": user_input,
-                        "agent": final
-                    })
-                    # Keep only last 10 exchanges
-                    if len(self.conversation_history) > 10:
-                        self.conversation_history = self.conversation_history[-10:]
-
-                    self._log_session_summary(user_input, steps + 1, total_tokens, total_latency, session_start, "final_answer", final)
-                    return final
-
-            # Parse Action
+            # Parse Action (always check for Action first to ensure tools are executed if generated)
             match = re.search(r'Action:\s*(\w+)\((.*?)\)', content)
             if match:
                 tool_name = match.group(1)
@@ -219,7 +209,42 @@ IMPORTANT: Based on the conversation history above, the patient has already prov
 
                 current_prompt += f"\n{content}\nObservation: {observation}"
             else:
-                # No Action and no Final Answer
+                # If no Action is present, then check for Final Answer (case-insensitive)
+                final_match = re.search(r'(?:Final Answer|Final answer|final answer):\s*(.*)', content, re.DOTALL | re.IGNORECASE)
+                if final_match:
+                    final = final_match.group(1).strip()
+                    if final:
+                        # Save to conversation history
+                        self.conversation_history.append({
+                            "user": user_input,
+                            "agent": final
+                        })
+                        # Keep only last 10 exchanges
+                        if len(self.conversation_history) > 10:
+                            self.conversation_history = self.conversation_history[-10:]
+
+                        self._log_session_summary(user_input, steps + 1, total_tokens, total_latency, session_start, "final_answer", final)
+                        return final
+
+                # No Action and no Final Answer in content.
+                # If there's no 'Action:' pattern, the model cannot call a tool. 
+                # Instead of looping and hitting rate limits, we treat the content as the Final Answer.
+                final = content.strip()
+                if final.startswith("Thought:"):
+                    # Strip the Thought: prefix if present, but keep the rest
+                    final = final.replace("Thought:", "").strip()
+
+                if final:
+                    self.conversation_history.append({
+                        "user": user_input,
+                        "agent": final
+                    })
+                    if len(self.conversation_history) > 10:
+                        self.conversation_history = self.conversation_history[-10:]
+                    self._log_session_summary(user_input, steps + 1, total_tokens, total_latency, session_start, "final_answer_fallback", final)
+                    return final
+
+                # If content was somehow empty, proceed to format reminder
                 current_prompt += f"\n{content}\nPlease follow the format: Thought, Action, or Final Answer."
 
             steps += 1
@@ -228,9 +253,10 @@ IMPORTANT: Based on the conversation history above, the patient has already prov
         logger.log_event("MAX_STEPS_REACHED", {"steps": steps, "last_content": last_content})
         self._log_session_summary(user_input, steps, total_tokens, total_latency, session_start, "max_steps_reached")
 
-        # If last response had a partial answer, use it
-        if "Final Answer:" in last_content:
-            partial = last_content.split("Final Answer:")[-1].strip()
+        # If last response had a partial answer, use it (case-insensitive)
+        final_match = re.search(r'(?:Final Answer|Final answer|final answer):\s*(.*)', last_content, re.DOTALL | re.IGNORECASE)
+        if final_match:
+            partial = final_match.group(1).strip()
             if partial:
                 # Save to conversation history
                 self.conversation_history.append({"user": user_input, "agent": partial})
