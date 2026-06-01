@@ -90,6 +90,7 @@ def main():
     logger.log_event("CHATBOT_START", {"provider": llm.model_name})
 
     print("\nType your symptoms or 'exit' to quit.")
+    print("Type 'new' to start a new patient session.")
     print("=" * 60)
 
     while True:
@@ -100,6 +101,10 @@ def main():
             if user_input.lower() in ["exit", "quit"]:
                 print("Goodbye!")
                 break
+            if user_input.lower() in ["new", "reset", "bệnh nhân mới"]:
+                agent.reset_history()
+                print("[INFO] History cleared. Starting new patient session.")
+                continue
 
             session_count += 1
             logger.log_event("USER_INPUT", {"session": session_count, "input": user_input})

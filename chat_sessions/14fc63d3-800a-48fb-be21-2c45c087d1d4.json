@@ -1,0 +1,98 @@
+{
+  "id": "14fc63d3-800a-48fb-be21-2c45c087d1d4",
+  "title": "Hay đau đầu, mất ngủ, chóng mặt",
+  "created_at": "2026-06-01T09:57:23.891847",
+  "updated_at": "2026-06-01T10:03:28.795322",
+  "messages": [
+    {
+      "role": "user",
+      "content": "Hay đau đầu, mất ngủ, chóng mặt",
+      "timestamp": "2026-06-01T09:57:28.216591"
+    },
+    {
+      "role": "agent",
+      "content": "Bạn muốn đặt lịch khám vào ngày nào ạ?",
+      "timestamp": "2026-06-01T09:57:28.216591"
+    },
+    {
+      "role": "user",
+      "content": "Ngày mai",
+      "timestamp": "2026-06-01T09:59:38.333383"
+    },
+    {
+      "role": "agent",
+      "content": "Rất tiếc, Khoa Thần kinh không có lịch khám vào ngày mai (2024-05-16). Bạn vui lòng chọn ngày khác nhé.",
+      "timestamp": "2026-06-01T09:59:38.333383"
+    },
+    {
+      "role": "user",
+      "content": "Ngày mai 02/06/2026",
+      "timestamp": "2026-06-01T10:00:16.988232"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:00:16.988232"
+    },
+    {
+      "role": "user",
+      "content": "Ngày mai 02/06/2026",
+      "timestamp": "2026-06-01T10:00:41.130460"
+    },
+    {
+      "role": "agent",
+      "content": "Vào ngày 02/06/2026, Khoa Thần kinh có lịch khám với BS. Phạm Quang C vào buổi chiều các khung giờ: 14:30, 15:00, 16:30. Bạn muốn đặt lịch vào giờ nào ạ?",
+      "timestamp": "2026-06-01T10:00:41.130460"
+    },
+    {
+      "role": "user",
+      "content": "14:30",
+      "timestamp": "2026-06-01T10:01:24.880009"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:01:24.880009"
+    },
+    {
+      "role": "user",
+      "content": "14:30",
+      "timestamp": "2026-06-01T10:02:11.930139"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:02:11.930139"
+    },
+    {
+      "role": "user",
+      "content": "15h chieu",
+      "timestamp": "2026-06-01T10:02:27.604624"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:02:27.604624"
+    },
+    {
+      "role": "user",
+      "content": "15h chieu",
+      "timestamp": "2026-06-01T10:03:23.749669"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:03:23.749669"
+    },
+    {
+      "role": "user",
+      "content": "15h chieu",
+      "timestamp": "2026-06-01T10:03:28.795322"
+    },
+    {
+      "role": "agent",
+      "content": "Hệ thống đang bận hoặc vượt giới hạn lượt gọi (Rate Limit). Vui lòng đợi vài giây rồi thử lại.",
+      "timestamp": "2026-06-01T10:03:28.795322"
+    }
+  ]
+}

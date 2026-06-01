@@ -17,7 +17,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Import core modules
-from src.core.openai_provider import OpenAIProvider
 from src.core.gemini_provider import GeminiProvider
 try:
     from src.core.local_provider import LocalProvider
@@ -233,6 +232,21 @@ async def chat_endpoint(request: ChatRequest):
 
         # 3. Instantiate ReAct Agent
         agent = ReActAgent(llm=provider, tools=tools, max_steps=5)
+
+        # Feed session messages history into agent's conversation history
+        if session and "messages" in session:
+            history = []
+            user_msg = None
+            for msg in session["messages"]:
+                if msg["role"] == "user":
+                    user_msg = msg["content"]
+                elif msg["role"] == "agent" and user_msg is not None:
+                    history.append({
+                        "user": user_msg,
+                        "agent": msg["content"]
+                    })
+                    user_msg = None
+            agent.conversation_history = history
 
         # 4. Capture log file position before running
         log_dir = "logs"
